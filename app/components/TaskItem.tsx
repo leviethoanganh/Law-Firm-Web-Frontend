@@ -1,11 +1,14 @@
 "use client";
-import { Clock, CheckCircle2, Eye, AlertCircle, CheckCheck } from 'lucide-react';
+import { Clock, CheckCircle2, Eye, AlertCircle, CheckCheck, User2, Send } from 'lucide-react';
 
 interface TaskItemProps {
   title: string;
   description: string;
   dueDate: string;
   status: string;
+  // Bổ sung thêm 2 prop mới để nhận tên người giao và người nhận
+  assignerName?: string; 
+  assigneeName?: string;
   isReadByAssignee?: boolean; 
   showCompleteButton?: boolean;
   showMarkAsReadButton?: boolean; 
@@ -18,6 +21,8 @@ export const TaskItem = ({
   description,
   dueDate,
   status,
+  assignerName,
+  assigneeName,
   isReadByAssignee,
   showCompleteButton,
   showMarkAsReadButton,
@@ -25,7 +30,6 @@ export const TaskItem = ({
   onMarkAsRead
 }: TaskItemProps) => {
   
-  // Dấu chấm than và màu nền đỏ dựa trên prop điều khiển từ MyTasks/MyCases
   const isUnread = showMarkAsReadButton; 
 
   return (
@@ -35,7 +39,6 @@ export const TaskItem = ({
         : 'border-gray-200 hover:border-indigo-300 hover:shadow-md'
     }`}>
       
-      {/* 1. Dấu chấm than đỏ: Sẽ tự động biến mất khi prop showMarkAsReadButton chuyển sang false */}
       {isUnread && (
         <div className="absolute -right-2 -top-2 z-20">
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-lg animate-pulse border-2 border-white">
@@ -46,6 +49,16 @@ export const TaskItem = ({
 
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-2 flex-1">
+          {/* Hiển thị vai trò người giao/nhận task phía trên tiêu đề */}
+          <div className="flex gap-3 mb-2">
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase">
+              <Send className="w-3 h-3" /> From: {assignerName || "N/A"}
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded uppercase">
+              <User2 className="w-3 h-3" /> To: {assigneeName || "N/A"}
+            </div>
+          </div>
+
           <h4 className={`font-bold text-lg ${isUnread ? 'text-red-900' : 'text-gray-900'}`}>
             {title}
           </h4>
@@ -63,7 +76,6 @@ export const TaskItem = ({
               {status}
             </span>
             
-            {/* Hiển thị trạng thái "Đã xem" cho người giao việc (Assigner) */}
             {isReadByAssignee && (
               <span className="flex items-center gap-1 text-green-600 text-xs font-medium">
                 <Eye className="w-4 h-4" /> Partner đã xem
@@ -71,7 +83,6 @@ export const TaskItem = ({
             )}
           </div>
 
-          {/* 2. Nút xác nhận: Khi nhấn sẽ gọi API Supabase thông qua Backend Node.js */}
           {showMarkAsReadButton && (
             <button 
               onClick={(e) => {
@@ -85,7 +96,6 @@ export const TaskItem = ({
           )}
         </div>
         
-        {/* Nút Hoàn thành nhiệm vụ dành cho người nhận việc */}
         {showCompleteButton && status !== 'completed' && (
           <button 
             onClick={(e) => {
