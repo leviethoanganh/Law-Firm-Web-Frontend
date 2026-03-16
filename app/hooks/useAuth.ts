@@ -17,6 +17,7 @@ export const useAuth = () => {
         if (data.code === "error") {
           setIsLogin(false);
           setInfoUser(null);
+          router.push("/user/login");
         }
         if(data.code == "success") {
           setIsLogin(true);
