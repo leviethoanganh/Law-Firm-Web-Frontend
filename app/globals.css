@@ -1,26 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-2xl: 1200px;
+  --color-primary: #0088FF;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  font-family: "Lexend", sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Contain - Quản lý độ rộng khung trang web */
+.contain {
+  width: 1184px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1199.98px) {
+  /* Máy tính cỡ nhỏ */
+  .contain {
+    width: 960px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@media (max-width: 991.98px) {
+  /* Màn hình máy tính bảng cỡ lớn */
+  .contain {
+    width: 720px;
+  }
 }
+
+@media (max-width: 767.98px) {
+  /* Màn hình máy tính bảng cỡ nhỏ */
+  .contain {
+    width: 540px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  /* Màn hình điện thoại */
+  .contain {
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+/* End Contain */
+
+select,
+input,
+button,
+textarea {
+  outline: none;
+}
+
+/* card-item - Định dạng thẻ tour du lịch */
+.card-item {
+  background-image: linear-gradient(180deg, #F6F6F6 2.38%, #FFFFFF 70.43%);
+}
+
+.card-item .inner-image {
+  box-shadow: 0px 4px 24px 0px #0000001F;
+}
+/* End card-item */
+
+svg  {
+  display :  inline-block ;
+}
+
+.just-validate-error-label {
+  font-size :  11px ;
+  margin-top :  4px ;
+}
+
