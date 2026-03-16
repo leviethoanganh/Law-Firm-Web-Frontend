@@ -1,10 +1,12 @@
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
 
 export const useAuth = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [infoUser, setInfoUser] = useState<any>(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     // Gọi API kiểm tra trạng thái đăng nhập từ Server
