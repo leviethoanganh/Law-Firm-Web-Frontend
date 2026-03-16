@@ -92,11 +92,10 @@ export const MyTasks = () => {
         <div className="grid gap-4">
             {tasks.length > 0 ? (
                 tasks.map((item) => (
-                    // THAY ĐỔI: Sử dụng item.id thay cho item._id
                     <div key={item.id} className="relative group">
-                        {/* Badge NHIỆM VỤ MỚI: Dựa trên trường is_read_by_assignee của SQL */}
+                        {/* Badge NHIỆM VỤ MỚI */}
                         {!item.is_read_by_assignee && (
-                            <div className="absolute -top-2 -left-2 z-10 flex items-center gap-1 bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg border border-white">
+                            <div className="absolute -top-2 -left-2 z-10 flex items-center gap-1 bg-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg border border-white animate-pulse">
                                 <Sparkles className="w-3 h-3 text-yellow-300" /> NHIỆM VỤ MỚI
                             </div>
                         )}
@@ -104,10 +103,12 @@ export const MyTasks = () => {
                         <TaskItem 
                             title={item.title} 
                             description={item.description} 
-                            // Supabase dùng due_date
                             dueDate={item.due_date} 
                             status={item.status}
-                            // Mapping dữ liệu cho TaskItem (vốn vẫn dùng camelCase làm props)
+                            // CHỈNH SỬA TẠI ĐÂY: Truyền tên từ object lồng nhau assigner và assignee
+                            assignerName={item.assigner?.full_name}
+                            assigneeName={item.assignee?.full_name}
+                            // ------------------------------------------------------------------
                             isReadByAssignee={item.is_read_by_assignee}
                             showMarkAsReadButton={!item.is_read_by_assignee}
                             onMarkAsRead={() => handleMarkAsRead(item.id)}

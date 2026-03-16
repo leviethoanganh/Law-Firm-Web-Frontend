@@ -20,8 +20,6 @@ export const MyCases = () => {
       if (data.code === "success") {
         let rawTasks = data.data;
 
-        // LOGIC SẮP XẾP:
-        // Task "completed" nhưng "chưa xem" (is_read_by_assigner === false) lên đầu
         rawTasks.sort((a: any, b: any) => {
           const aNeedsAttention = a.status === 'completed' && !a.is_read_by_assigner;
           const bNeedsAttention = b.status === 'completed' && !b.is_read_by_assigner;
@@ -29,7 +27,6 @@ export const MyCases = () => {
           if (aNeedsAttention && !bNeedsAttention) return -1;
           if (!aNeedsAttention && bNeedsAttention) return 1;
           
-          // Sắp xếp theo ngày tạo mới nhất (Supabase dùng created_at)
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         });
 
@@ -56,7 +53,6 @@ export const MyCases = () => {
       const data = await response.json();
 
       if (data.code === "success") {
-        // Gọi lại fetch để cập nhật state, mất Badge và nhảy vị trí
         fetchMyCases();
       } else {
         toast.error(data.message);
@@ -79,9 +75,7 @@ export const MyCases = () => {
     <div className="grid gap-4">
       {tasks.length > 0 ? (
         tasks.map((item) => (
-          // THAY ĐỔI: Sử dụng item.id thay cho item._id
           <div key={item.id} className="relative">
-            {/* Badge thông báo kết quả mới dựa trên snake_case của Supabase */}
             {item.status === 'completed' && !item.is_read_by_assigner && (
               <div className="absolute -top-2 -left-2 z-10 flex items-center gap-1 bg-yellow-400 text-black text-[10px] font-bold px-2 py-1 rounded-lg shadow-sm border border-white animate-bounce">
                 <AlertCircle className="w-3 h-3" /> KẾT QUẢ MỚI
@@ -91,10 +85,12 @@ export const MyCases = () => {
             <TaskItem 
               title={item.title} 
               description={item.description} 
-              // Supabase dùng due_date
               dueDate={item.due_date} 
               status={item.status}
-              // Mapping snake_case sang camelCase cho TaskItem
+              // CHỈNH SỬA TẠI ĐÂY: Truy cập vào object lồng nhau từ Backend trả về
+              assignerName={item.assigner?.full_name} 
+              assigneeName={item.assignee?.full_name}
+              // ------------------------------------------------------------
               isReadByAssignee={item.is_read_by_assignee}
               showMarkAsReadButton={item.status === 'completed' && !item.is_read_by_assigner}
               onMarkAsRead={() => handleMarkAsRead(item.id)}
