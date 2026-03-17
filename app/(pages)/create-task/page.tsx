@@ -39,37 +39,35 @@ export default function CreateTaskPage() {
         fetchMembers();
     }, []);
 
+// Trong file page.tsx
     useEffect(() => {
-        let isSubmitting = false;
-
         const validator = new JustValidate("#createTaskForm", {
             validateBeforeSubmitting: true,
         });
 
         validator
             .addField("#title", [
-                { rule: "required", errorMessage: "Tiêu đề công việc là bắt buộc!" },
-                { rule: "minLength", value: 5, errorMessage: "Tiêu đề quá ngắn!" },
+                { rule: "required", errorMessage: "Tiêu đề là bắt buộc!" },
+                { rule: "minLength", value: 5, errorMessage: "Tiêu đề tối thiểu 5 ký tự!" },
             ])
             .addField("#description", [
-                { rule: "required", errorMessage: "Mô tả công việc là bắt buộc!" },
+                { rule: "required", errorMessage: "Mô tả là bắt buộc!" },
             ])
             .addField("#assigneeName", [
                 { rule: "required", errorMessage: "Vui lòng chọn người nhận!" },
             ])
             .onSuccess(async (event: any) => {
-                if (isSubmitting) return;
+                // Dùng setIsPending để chặn submit nhiều lần thay vì biến let isSubmitting
+                if (isPending) return; 
                 
-                isSubmitting = true;
                 setIsPending(true);
 
                 const form = event.target;
                 const dataFinal = {
                     title: form.title.value,
                     description: form.description.value,
-                    assigneeName: form.assigneeName.value,
-                    assigneeEmail: form.assigneeEmail.value, // Giá trị này sẽ lấy từ state selectedEmail
-                    dueDate: form.dueDate.value,
+                    assigneeEmail: selectedEmail, // Dùng trực tiếp state cho chính xác
+                    dueDate: form.dueDate.value || null,
                 };
 
                 try {
@@ -82,23 +80,22 @@ export default function CreateTaskPage() {
 
                     const data = await response.json();
 
-                    if (data.code === "error") {
-                        toast.error(data.message);
-                        isSubmitting = false;
-                        setIsPending(false);
-                    } else if (data.code === "success") {
+                    if (data.code === "success") {
                         toast.success("Tạo và giao việc thành công!");
-                        setTimeout(() => router.push("/home"), 1000);
+                        // Nếu Anh đã sửa Backend gửi mail, mail sẽ được gửi ngay lúc này
+                        setTimeout(() => router.push("/home"), 1500);
+                    } else {
+                        toast.error(data.message || "Đã có lỗi xảy ra");
+                        setIsPending(false);
                     }
                 } catch (error) {
                     toast.error("Lỗi kết nối đến hệ thống!");
-                    isSubmitting = false;
                     setIsPending(false);
                 }
             });
 
         return () => { validator.destroy(); };
-    }, [router]);
+    }, [router, selectedEmail, isPending]); // Thêm selectedEmail vào dependency để validator cập nhật
 
     // --- BỔ SUNG 3: Hàm xử lý khi chọn member ---
     const handleMemberChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
